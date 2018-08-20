@@ -1,3 +1,6 @@
+require 'set'
+require 'byebug'
+
 class DynamicProgramming
   def initialize
     @blair_cache = []
@@ -22,12 +25,24 @@ class DynamicProgramming
 
   def frog_hops_bottom_up(n)
     cache = frog_cache_builder(n)
-    cache[n - 1]
+    cache[n]
   end
 
   def frog_cache_builder(n)
-    cahce = [[1], [[1,1], [2]], [[1,1,1],[1,2],[2,1],[3]]] 
-   
+    cache = { 1 => [[1]], 2 => [[1,1], [2]], 3 => [[1,2], [2,1], [1,1,1], [3]] }
+    return cache if n < 4
+    4.upto(n) do |i|
+      solutions = []
+      3.downto(1) do |j|
+        cache[i - j].each do |solution| 
+          new_solution = solution.dup
+          new_solution << j
+          solutions << new_solution
+        end 
+      end 
+      cache[i] = solutions
+    end
+    cache 
   end
 
   def frog_hops_top_down(n)
